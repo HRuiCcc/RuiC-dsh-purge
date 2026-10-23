@@ -1,0 +1,24 @@
+{
+  "name": "ruic-dsh-purge",
+  "version": "1.0.0",
+  "description": "RuiC DSH maintenance plugin: preflight, transactional patches, verified snapshots and conflict-aware rollback.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {".": "./lib/index.js", "./client": "./client.js", "./package.json": "./package.json"},
+  "bin": {"ruic-dsh-purge": "bin/ruic-dsh-purge.js"},
+  "files": ["lib", "bin", "docs", "client.js", "cordis.patch.yml", "README.md", "LICENSE", "NOTICE.md", "CHANGELOG.md"],
+  "scripts": {"test": "node --test", "check": "node scripts/check.mjs", "smoke": "node scripts/smoke.mjs"},
+  "engines": {"node": ">=22"},
+  "license": "MIT",
+  "author": "RuiC",
+  "contributors": ["小杨 (original dsh-purge)", "ZiPengWei (source repository)"],
+  "repository": {"type": "git", "url": "git+https://github.com/HRuiCcc/RuiC-dsh-purge.git"},
+  "homepage": "https://github.com/HRuiCcc/RuiC-dsh-purge#readme",
+  "bugs": {"url": "https://github.com/HRuiCcc/RuiC-dsh-purge/issues"},
+  "peerDependencies": {"@deepseek-ai/cordis": "^4.0.1"},
+  "peerDependenciesMeta": {"@deepseek-ai/cordis": {"optional": true}},
+  "dsh": {
+    "bundle": {"patch": "./cordis.patch.yml"},
+    "client": {"platform": "web", "inject": ["@deepseek-ai/dsh-client-ui-settings"]}
+  }
+}

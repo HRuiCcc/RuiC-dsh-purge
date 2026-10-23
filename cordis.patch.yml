@@ -1,0 +1,9 @@
+- insert:
+    - id: ruic-dsh-purge
+      name: ruic-dsh-purge
+      config:
+        enabled: true
+        autoApplyOnStart: false
+        # base: /absolute/path/to/node_modules/@deepseek-ai
+        # home: /absolute/path/to/.dsh
+        # shimDir: /absolute/path/to/windows/npm
