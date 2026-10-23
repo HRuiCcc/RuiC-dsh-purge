@@ -17,7 +17,8 @@ try {
   run('tar', ['-xzf', path.join(root, packed.filename), '-C', root], process.cwd());
   const cwd = path.join(root, 'package');
   const version = run(process.execPath, ['bin/ruic-dsh-purge.js', '--version'], cwd).trim();
-  if (version !== '1.0.0') throw new Error('Packed CLI version mismatch');
+  const expected = JSON.parse(await fs.readFile(path.join(process.cwd(), 'package.json'), 'utf8')).version;
+  if (version !== expected) throw new Error(`Packed CLI version mismatch: ${version} !== ${expected}`);
   run(process.execPath, ['--input-type=module', '-e', "import('./lib/index.js').then(m=>{if(m.name!=='ruic-dsh-purge')process.exit(1)})"], cwd);
   console.log(`Packed CLI and plugin import passed without dependencies (${packed.files.length} files).`);
 } finally { await fs.rm(root, { recursive: true, force: true }); }

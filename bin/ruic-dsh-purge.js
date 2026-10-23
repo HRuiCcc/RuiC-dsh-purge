@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import fs from 'node:fs/promises';
 import { run, readPrompt, savePrompt } from '../lib/service.js';
+import { version } from '../lib/version.js';
 
-const help = `RuiC-dsh-purge 1.0.0
+const help = `RuiC-dsh-purge ${version}
 Usage: ruic-dsh-purge <command> [options]
 
   status / selfcheck      Inspect patch evidence and unfinished operations
@@ -25,7 +26,7 @@ Default is read-only status. Restart DSH manually after apply/revert.
 async function main() {
   const args = process.argv.slice(2);
   if (args.includes('--help') || args.includes('-h')) { console.log(help); return; }
-  if (args.includes('--version')) { console.log('1.0.0'); return; }
+  if (args.includes('--version')) { console.log(version); return; }
   const options = {}, positionals = [];
   let json = false, file;
   for (let i = 0; i < args.length; i++) {

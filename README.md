@@ -6,7 +6,7 @@
 
 DSH 本机维护插件 · 预检 → 快照 → 原子写入 → 冲突检测回滚
 
-[![Release](https://img.shields.io/badge/release-1.0.0-111111)](https://github.com/HRuiCcc/RuiC-dsh-purge/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.0.1-111111)](https://github.com/HRuiCcc/RuiC-dsh-purge/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-2f6fed)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%E2%89%A5%2022-43853d)](package.json)
 [![DSH](https://img.shields.io/badge/DSH_Desktop-0.2.1--rc.2-5b5bd6)](docs/COMPATIBILITY.md)
@@ -98,10 +98,10 @@ flowchart TD
 
 ## 安装
 
-从 [Releases](https://github.com/HRuiCcc/RuiC-dsh-purge/releases/latest) 取 `ruic-dsh-purge-1.0.0.tgz`，在**对应 DSH 实例**的 CLI 上装：
+从 [Releases](https://github.com/HRuiCcc/RuiC-dsh-purge/releases/latest) 取 `ruic-dsh-purge-1.0.1.tgz`，在**对应 DSH 实例**的 CLI 上装：
 
 ```sh
-dsh plugin --profile desktop add ./ruic-dsh-purge-1.0.0.tgz
+dsh plugin --profile desktop add ./ruic-dsh-purge-1.0.1.tgz
 # Web 实例用 --profile web
 ```
 
@@ -111,7 +111,7 @@ dsh plugin --profile desktop add ./ruic-dsh-purge-1.0.0.tgz
 
 - 系统 `PATH` 里没有 `dsh` 时，用 DSH 自带的命令行入口。**不要为了装它另外装一个旧版全局 DSH**——会和现有桌面实例打架。
 - 已有 profile 需要先由 DSH 初始化过。
-- 本项目**没有发布到 npm registry**，`npm install -g ruic-dsh-purge` 不是安装方式。已下载的 tgz 可以本地全局装 CLI：`npm install -g ./ruic-dsh-purge-1.0.0.tgz`。
+- 本项目**没有发布到 npm registry**，`npm install -g ruic-dsh-purge` 不是安装方式。已下载的 tgz 可以本地全局装 CLI：`npm install -g ./ruic-dsh-purge-1.0.1.tgz`。
 
 ### 从源码
 
@@ -192,6 +192,17 @@ Windows 旧版 npm 布局要显式传 `--shim-dir <npm-prefix>`，`dsh.cmd` 和 
 | 新版会话权限 | 用 DSH 原生 `/permission`；不把文件标记当成当前会话权限 |
 | 未知版本 | 报告实际版本和匹配结果，不凭版本号宣称兼容 |
 
+### 怎么自己复核
+
+不用信这张表，跑一条命令：
+
+```sh
+npm run verify:desktop           # 从安装包里取真实源文件，在临时副本上跑完整 apply/回滚
+npm run verify:desktop -- --full # 再解出整个运行时，跑真实 Cordis/DSH 模块集成测试
+```
+
+它会打印宿主版本与逐项步骤，并核对签名包的 size/mtime 在验证前后未变。2026-10-23 对 **0.2.1-rc.2** 的结果：4/4 新版锚点命中、补丁 5–8 为 `native_setting`、回滚字节级一致、原包未被改动、运行时集成套件通过。
+
 **不会**直接改写签名 ASAR、修改 app 签名或自动退出/重启 DSH。归档内补丁能匹配只证明预检通过，不表示已经写入或运行生效。完整的 Desktop UI、登录会话与 Windows/macOS 签名换包不在本版本验证范围内。
 
 逐条证据与不覆盖范围见 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md)（含实测文件 SHA256）。
@@ -247,15 +258,20 @@ node bin/ruic-dsh-purge.js snapshots --json   # 看有没有 prepared/applying/r
 ## 开发与验证
 
 ```sh
-npm run check   # 静态检查
-npm test        # node --test，全程临时目录
-npm run smoke   # 打包冒烟
+npm run check              # 静态检查
+npm test                   # node --test，全程临时目录
+npm run smoke              # 打包冒烟
 
-# 可选：用本地已解包的发行包验证真实 Cordis/DSH API
+npm run verify:desktop     # 对已安装的 DSH 做只读实机验证（副本上 apply/回滚）
+npm run verify:desktop -- --full   # 另跑真实 Cordis/DSH 模块集成套件
+
+# 已有解包好的运行时时，也可以直接指向它
 DSH_RUNTIME_ROOT=/path/to/node_modules/@deepseek-ai npm test
 ```
 
-测试从不针对真实安装执行 `apply`。需要发行包的真实 API 集成测试在缺失时会跳过——**CI 绿不等于 Desktop 端到端验收通过**。
+`verify:desktop` 默认探测 `/Applications/DeepSeek Harness.app`，也可以 `--app <path>` 指定 `.app`、`app.asar` 或解包目录；加 `--json` 输出机器可读结果。
+
+测试从不针对真实安装执行 `apply`。需要发行包的真实 API 集成测试在缺失时会跳过——**CI 绿不等于 Desktop 端到端验收通过**，所以本项目给了 `verify:desktop` 让你在真机上复核，而不是只给一句"兼容"。
 
 本次发布**未启用 GitHub Actions**。跨平台工作流模板在 Release 源码压缩包的 `.github/workflows/checks.yml`，需要 workflow 写权限后自行推送启用。
 

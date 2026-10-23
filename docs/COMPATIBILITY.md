@@ -4,6 +4,41 @@ Inspection date: 2026-10-23. Target: locally installed DeepSeek Harness Desktop
 **0.2.1-rc.2**, bundled Cordis **4.0.5**. This records observations from shipped
 source and isolated runtime tests, not proof of a running user's session state.
 
+## Reproduce it yourself
+
+```sh
+npm run verify:desktop -- --full
+```
+
+That command discovers the installed host (or takes `--app`), copies the target
+files out of the sealed archive into a temporary base, and asserts, in order:
+`plan` matches, `apply` succeeds, the patched module parses, a second `apply`
+changes nothing, `revert` restores byte-identical bytes, and the archive's
+size/mtime is unchanged. With `--full` it also materializes the whole
+`dsh/node_modules` tree and runs the real Cordis/DSH integration suite against
+the shipped modules.
+
+Result for 0.2.1-rc.2 on 2026-10-23:
+
+| Step | Result |
+| --- | --- |
+| Profile selection | `dsh-0.2-native-permissions` |
+| Modern anchors 1–4 | 4/4 matched (`pending` before apply) |
+| Patches 5–8 | `native_setting`, never written |
+| Apply → syntax check | pass |
+| Second apply | 0 changes |
+| Revert | byte-exact for both target files |
+| Signed archive | size/mtime unchanged |
+| Runtime suite | pass against the extracted shipped modules |
+
+One archive member
+(`dsh/node_modules/@deepseek-ai/libreoffice-kit-darwin-arm64/bin/libreoffice-kit`,
+~134 MiB) exceeds the single-member limit and is reported as skipped by name
+during `--full`; it is a native binary unrelated to the patched JavaScript.
+
+Verification only proves these steps on this build. It does not prove a running
+user's session state, model behavior, or any other DSH version.
+
 ## Findings and implementation
 
 | Shipped evidence | RuiC behavior |
