@@ -194,7 +194,7 @@ Windows 旧版 npm 布局要显式传 `--shim-dir <npm-prefix>`，`dsh.cmd` 和 
 
 ### 怎么自己复核
 
-不用信这张表，跑一条命令：
+不用信这张表，在**源码检出**里跑一条命令（发行包不含 `scripts/`）：
 
 ```sh
 npm run verify:desktop           # 从安装包里取真实源文件，在临时副本上跑完整 apply/回滚
