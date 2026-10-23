@@ -284,20 +284,11 @@ DSH_RUNTIME_ROOT=/path/to/node_modules/@deepseek-ai npm test
 
 **关键词**：DSH 插件 · DeepSeek Harness · Cordis · 补丁管理 · 事务化写入 · 快照回滚 · 冲突检测 · 提示词管理 · 本机维护 · patch · snapshot · rollback
 
-## 参考项目
-
-这个项目不是凭空写的，两处来源分开说清楚，不混在一起：
-
-| 项目 | 关系 | 具体用了什么 |
-| --- | --- | --- |
-| [ZiPengWei/dsh-purge](https://github.com/ZiPengWei/dsh-purge) | **上游**（MIT，原作者小杨 / YuJunZhiXue，基于 commit `084b10d`） | 8 条补丁的定义、DSH 设置槽位集成思路；本版重写了事务层（预检、快照、原子写入、冲突回滚） |
-| [kingcharleslzy-ai/dsh-purge](https://github.com/kingcharleslzy-ai/dsh-purge)（Purge Community） | **同类参考**（未复制其代码） | README 的组织方式与兼容性表述口径、"先自检、再应用"的产品思路；并借它确认了 0.2.1-rc.2 这代宿主该往哪查 |
-
-两个项目做的是同一件事：给 DSH 打本机补丁。差别在选择方向——Purge Community 把功能铺得很宽（三平台安装器、锚点诊断、预设排除、配套出图插件），本项目只把"改得准、退得回"这一件事做深。需要更全的功能就去用它的，需要可复核的改动记录就用这个。
-
 ## 致谢
 
 补丁定义与设置槽位集成源自 [ZiPengWei/dsh-purge](https://github.com/ZiPengWei/dsh-purge)（原作者小杨 / YuJunZhiXue）。署名与许可证保留在 [LICENSE](LICENSE) 与 [NOTICE](NOTICE.md)。
+
+另外参考了同源的 [Purge Community](https://github.com/kingcharleslzy-ai/dsh-purge)，README 的版式和"先自检、再应用"的思路借自它，未复制其代码。
 
 MIT © 原作者小杨及 RuiC。独立社区项目，与 DeepSeek 无隶属关系。
 
