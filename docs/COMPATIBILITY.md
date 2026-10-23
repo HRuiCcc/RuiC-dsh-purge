@@ -59,6 +59,24 @@ The installed `dsh-agent-instructions/lib/index.js` examined has SHA256
 `4011f6e4c08228601bd4348ac78e322913142264f6e491ffdf9dcfda97393988`.
 The original application artifact and user profile data are not distributed.
 
+## Third-party Electron carriers (2026-10-23)
+
+Observed on a DSH 0.2.1-rc.2 carrier that packages the runtime at the archive
+root (`app.asar/node_modules/@deepseek-ai`, no `dsh/` prefix) and launches
+`host.mjs` as an `ELECTRON_RUN_AS_NODE` child:
+
+| Shipped evidence | RuiC behavior |
+| --- | --- |
+| Runtime at the archive root, canonical `dsh/` member absent | Both members are probed; the canonical layout still wins when present |
+| `fs.lstat` on a `.asar` path returns size 0; `fs.open` throws `ENOENT, not found in <archive>` | Raw archive reads run with `process.noAsar` set, then restore the previous value |
+| `process.resourcesPath` is undefined in the as-Node host child | `<dirname(process.execPath)>/resources` is probed as well |
+| A hardcoded macOS candidate resolves to `C:\Applications\...` on Windows | The macOS path is only probed on darwin |
+| ASAR `link` metadata | Still refused with `ASAR linked members are not supported`, never downgraded to "member missing" |
+
+Because the runtime lives inside a sealed archive, this carrier reports
+`sealed`: read-only preflight, independent prompt, commands and tools work;
+patch writing does not.
+
 ## Validation scope
 
 - Real module imports, Cordis contexts, command/tool/prompt registration and route lifecycle.

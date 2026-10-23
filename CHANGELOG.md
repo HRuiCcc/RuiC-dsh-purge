@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.2 — 2026-10-23
+
+第三方 Electron 外壳兼容（实测 DSH 0.2.1-rc.2 的 DeepSeek Bot 外壳，运行时打包在 `app.asar` 根 `node_modules/@deepseek-ai`）。
+
+- ASAR 发现支持运行时位于归档根的打包布局；官方 `dsh/node_modules/@deepseek-ai` 仍优先，两种都在时选官方布局。
+- Electron 会把所有 `.asar` 路径当作包内成员解析，直接 `fs.open` 读归档会报 `ENOENT, not found in ...app.asar`；读取原始归档字节期间临时关闭 asar 支持（`process.noAsar`），结束立即恢复原值。
+- 宿主探测不再在非 macOS 平台尝试硬编码的 macOS 路径；新增 `<可执行文件目录>/resources` 候选，兼容 `ELECTRON_RUN_AS_NODE` 子进程。
+- 显式传入归档根成员时按真实成员校验；ASAR 链接与元数据拒绝继续上抛，不会被布局探测吞掉。
+- 测试新增「归档根布局可发现」「官方布局优先」两例；显式传入不支持成员时的断言改为按真实失败原因匹配。
+
 ## 1.0.1 — 2026-10-23
 
 Verification release against the shipped DSH Desktop 0.2.1-rc.2 host.

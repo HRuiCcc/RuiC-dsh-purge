@@ -116,7 +116,36 @@ test('ASAR is sealed and readable through app, Resources, archive and virtual pa
     assert.equal(await readHostPackage(host, 'missing'), null);
   }
   assert.deepEqual(await fs.readFile(archive), before);
-  await assert.rejects(discoverHost({ base: path.join(archive, 'node_modules/@deepseek-ai') }), /Expected ASAR package base/);
+  await assert.rejects(discoverHost({ base: path.join(archive, 'node_modules/@deepseek-ai') }), /not a directory with dsh-agent-instructions/);
+});
+
+test('ASAR with the runtime at the archive root is discovered', async t => {
+  const root = await temporary(t);
+  const resources = path.join(root, 'resources');
+  const archive = path.join(resources, 'app.asar');
+  const rootBase = 'node_modules/@deepseek-ai';
+  const files = {
+    [`${rootBase}/dsh-agent-instructions/lib/index.js`]: 'export const version = "0.2.1-rc.2";\n',
+    [`${rootBase}/dsh-agent-instructions/package.json`]: JSON.stringify({ name: '@deepseek-ai/dsh-agent-instructions', version: '0.2.1-rc.2' }),
+    'package.json': JSON.stringify({ name: 'electron-carrier', version: '0.2.1-rc.2' }),
+  };
+  await writeAsar(archive, files);
+  const host = await discoverHost({ base: resources });
+  assert.equal(host.layout, 'asar');
+  assert.equal(host.writable, false);
+  assert.equal(host.base, path.join(await fs.realpath(archive), rootBase));
+  assert.equal(host.version, '0.2.1-rc.2');
+  assert.equal((await readHostTarget(host, path.join(host.base, 'dsh-agent-instructions/lib/index.js'))).before.toString(), files[`${rootBase}/dsh-agent-instructions/lib/index.js`]);
+  assert.equal((await discoverHost({ base: path.join(archive, rootBase) })).base, host.base);
+});
+
+test('canonical ASAR layout wins when an archive also carries a root runtime', async t => {
+  const archive = path.join(await temporary(t), 'app.asar');
+  const files = fixtureFiles();
+  files['node_modules/@deepseek-ai/dsh-agent-instructions/lib/index.js'] = 'root runtime\n';
+  await writeAsar(archive, files);
+  const host = await discoverHost({ base: archive });
+  assert.equal(host.base, path.join(await fs.realpath(archive), memberBase));
 });
 
 test('ASAR version falls back to dsh/package.json when package metadata is absent', async t => {

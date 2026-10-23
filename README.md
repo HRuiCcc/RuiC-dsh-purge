@@ -6,7 +6,7 @@
 
 DSH 本机维护插件 · 预检 → 快照 → 原子写入 → 冲突检测回滚
 
-[![Release](https://img.shields.io/badge/release-1.0.1-111111)](https://github.com/HRuiCcc/RuiC-dsh-purge/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.0.2-111111)](https://github.com/HRuiCcc/RuiC-dsh-purge/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-2f6fed)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%E2%89%A5%2022-43853d)](package.json)
 [![DSH](https://img.shields.io/badge/DSH_Desktop-0.2.1--rc.2-5b5bd6)](docs/COMPATIBILITY.md)
@@ -98,20 +98,21 @@ flowchart TD
 
 ## 安装
 
-从 [Releases](https://github.com/HRuiCcc/RuiC-dsh-purge/releases/latest) 取 `ruic-dsh-purge-1.0.1.tgz`，在**对应 DSH 实例**的 CLI 上装：
+从 [Releases](https://github.com/HRuiCcc/RuiC-dsh-purge/releases/latest) 取 `ruic-dsh-purge-1.0.2.tgz`，在**对应 DSH 实例**的 CLI 上装：
 
 ```sh
-dsh plugin --profile desktop add ./ruic-dsh-purge-1.0.1.tgz
+dsh plugin --profile desktop add ./ruic-dsh-purge-1.0.2.tgz
 # Web 实例用 --profile web
 ```
 
 装完**手动重开**对应的 DSH 实例，在设置里找到 **RuiC Purge**。
 
-三个坑先说清：
+四个坑先说清：
 
 - 系统 `PATH` 里没有 `dsh` 时，用 DSH 自带的命令行入口。**不要为了装它另外装一个旧版全局 DSH**——会和现有桌面实例打架。
 - 已有 profile 需要先由 DSH 初始化过。
-- 本项目**没有发布到 npm registry**，`npm install -g ruic-dsh-purge` 不是安装方式。已下载的 tgz 可以本地全局装 CLI：`npm install -g ./ruic-dsh-purge-1.0.1.tgz`。
+- 官方桌面客户端的 profile 归 Electron 应用独占，CLI 可能报 `profile "desktop" is managed exclusively by the Electron application`。这时改用你**实际在跑**的实例对应的 profile 名和它的 `$DSH_HOME`，例如第三方外壳 `DeepSeek Bot` 的 `--profile ds-bot`：`DSH_HOME=<该实例的 home> dsh plugin --profile <名> add ./ruic-dsh-purge-1.0.2.tgz`。装完同样要重开那个实例。
+- 本项目**没有发布到 npm registry**，`npm install -g ruic-dsh-purge` 不是安装方式。已下载的 tgz 可以本地全局装 CLI：`npm install -g ./ruic-dsh-purge-1.0.2.tgz`。
 
 ### 从源码
 
@@ -187,6 +188,7 @@ Windows 旧版 npm 布局要显式传 `--shim-dir <npm-prefix>`，`dsh.cmd` 和 
 | 场景 | 支持范围 |
 | --- | --- |
 | 桌面签名 `app.asar` | 自动发现、只读预检、独立提示词、插件命令与工具、权限默认值观察 |
+| 第三方 Electron 外壳 | 运行时打包在归档根 `node_modules/@deepseek-ai` 时同样只读预检；Electron 的 asar 路径拦截与 macOS 兜底路径已处理 |
 | 0.2.1 解包目录 | 精确匹配新版 4 个提示词目标、快照应用、冲突检测回滚 |
 | 旧版 npm 布局 | 保留上游 8 条补丁；所有目标精确匹配后才写入 |
 | 新版会话权限 | 用 DSH 原生 `/permission`；不把文件标记当成当前会话权限 |
