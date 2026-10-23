@@ -14,4 +14,10 @@ This project is not affiliated with or endorsed by DeepSeek. DSH itself is not
 included. No DSH installation, account data, credentials, sessions or extracted
 application source is redistributed in this repository or its release package.
 
+The README structure and the "check the host, then apply" presentation were
+informed by Purge Community
+([kingcharleslzy-ai/dsh-purge](https://github.com/kingcharleslzy-ai/dsh-purge)),
+a separate derivative of the same upstream. No code from that project is
+included here; it is credited as a reference, not as a source.
+
 RuiC changes: Copyright (c) 2026 RuiC, released under the MIT license.

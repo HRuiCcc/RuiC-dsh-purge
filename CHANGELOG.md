@@ -8,6 +8,7 @@ Verification release against the shipped DSH Desktop 0.2.1-rc.2 host.
 - Added `materializeArchive()` so a sealed `app.asar` can be reproduced as a real npm-layout tree for the runtime suite; oversized members are reported by name instead of failing or being dropped silently.
 - Added `npm run verify:desktop -- --full`, which runs the real Cordis/DSH module integration suite against the extracted 0.2.1-rc.2 runtime.
 - Every version string now comes from the packaged manifest (`lib/version.js`), so the CLI, status payload and smoke test cannot drift from `package.json`.
+- README gained an explicit "参考项目" section separating the upstream derivative (ZiPengWei/dsh-purge) from the non-code reference (Purge Community).
 
 Verified result on 0.2.1-rc.2: 4/4 modern anchors matched, patches 5–8 reported as `native_setting`, revert byte-exact, archive untouched.
 
