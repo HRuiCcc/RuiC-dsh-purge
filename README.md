@@ -302,4 +302,6 @@ MIT © 原作者小杨及 RuiC。独立社区项目，与 DeepSeek 无隶属关�
 
 <img src="assets/wechat-donate.png" width="300" alt="微信赞赏码">
 
+<p>微号：<strong>hrc_rch</strong>（说明来意）</p>
+
 </div>
